@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pet.nome }} - Detalhes do Pet Desaparecido | PetFinder</title>
+    <meta name="description" content="Informações detalhadas sobre {{ pet.nome }}, {{ pet.especie }} desaparecido em {{ pet.local_desaparecimento }}. Ajude a encontrar este pet.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2e9e90;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b6b;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background-color: var(--light-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary-color) !important;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark-color) !important;
+            margin: 0 10px;
+            padding: 8px 15px !important;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-color);
+            color: var(--light-color) !important;
+        }
+        
+        .pet-detail-container {
+            padding: 60px 0;
+        }
+        
+        .pet-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pet-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .pet-info {
+            padding: 30px;
+        }
+        
+        .pet-name {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .pet-name:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+        }
+        
+        .contact-box {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .contact-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info {
+            font-size: 1.2rem;
+        }
+        
+        .status-badge {
+            font-size: 1rem;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .status-desaparecido {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-avistado {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-encontrado {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .avistamento-principal-card {
+            border-left: 4px solid var(--primary-color);
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            padding: 40px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .pet-image {
+                height: 300px;
+            }
+            
+            .pet-info {
+                padding: 20px;
+            }
+        }
+        .avistamento-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .avistamento-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+        #map {
+            cursor: pointer;
+        }
+
+        /* Estilo para a linha do tempo de avistamentos */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+            <i class="fas fa-paw me-2"></i>PetFinder
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('index') }}">Início</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="pet-detail-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="pet-card shadow-sm">
+                    <!-- Cabeçalho com status -->
+                    <div class="d-flex justify-content-between align-items-center p-4" 
+                         style="background-color: var(--primary-color); color: white;">
+                        <h2 class="mb-0">{{ pet.nome }}</h2>
+                        <span class="status-badge 
+                            {% if pet.encontrado and pet.confirmado_dono %}status-encontrado
+                            {% elif pet.avistado %}status-avistado
+                            {% else %}status-desaparecido{% endif %}">
+                            {% if pet.encontrado and pet.confirmado_dono %}
+                                <i class="fas fa-check-circle me-1"></i> ENCONTRADO
+                            {% elif pet.avistado %}
+                                <i class="fas fa-eye me-1"></i> AVISTADO
+                            {% else %}
+                                <i class="fas fa-search me-1"></i> DESAPARECIDO
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <!-- Foto principal -->
+                    {% if pet.foto %}
+                        <img src="{{ url_for('static', filename='uploads/' + pet.foto) }}" alt="{{ pet.nome }}" class="pet-image">
+                    {% else %}
+                        <div class="pet-image bg-light d-flex align-items-center justify-content-center">
+                            <i class="fas fa-paw fa-5x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="pet-info">                        
+                        <!-- Seção de Avistamento (se aplicável) -->
+                        {% if pet.avistado and not pet.encontrado %}
+                        <div class="avistamento-principal-card p-4 mb-4">
+                            <h4 class="text-primary mb-3">
+                                <i class="fas fa-binoculars me-2"></i> Este pet foi avistado!
+                            </h4>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <div class="info-label">Data do avistamento</div>
+                                        <div class="info-value">{{ pet.data_avistamento }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <div class="info-label">Local do avistamento</div>
+                                        <div class="info-value">{{ pet.local_avistamento }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% if pet.foto_avistamento %}
+                            <div class="info-item">
+                                <div class="info-label">Foto do avistamento</div>
+                                <img src="{{ url_for('static', filename='uploads/' + pet.foto_avistamento) }}" 
+                                     class="img-thumbnail mt-2" style="max-height: 200px;">
+                            </div>
+                            {% endif %}                        
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Informações básicas -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <div class="info-label">Espécie</div>
+                                    <div class="info-value">
+                                        <span class="badge bg-primary">{{ pet.especie }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-label">Raça</div>
+                                    <div class="info-value">{{ pet.raca or 'Não informada' }}</div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <div class="info-label">Data do Desaparecimento</div>
+                                    <div class="info-value">{{ pet.data_desaparecimento or 'Não informada' }}</div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-label">Local do Desaparecimento</div>
+                                    <div class="info-value">{{ pet.local_desaparecimento }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Seção de encontro confirmado -->
+                        {% if pet.encontrado and pet.data_encontrado %}
+                        <div class="alert alert-success mt-3">
+                            <h5><i class="fas fa-calendar-check me-2"></i> Encontrado em:</h5>
+                            <p>{{ pet.data_encontrado }} - {{ pet.local_encontrado }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Descrição -->
+                        <div class="info-item">
+                            <div class="info-label">Descrição</div>
+                            <div class="info-value">{{ pet.descricao or 'Nenhuma descrição adicional fornecida.' }}</div>
+                        </div>
+                        
+                        <!-- Contato -->
+                        <div class="contact-box">
+                            <div class="contact-title">Informações de Contato</div>
+                            <div class="contact-info">
+                                <i class="fas fa-phone me-2"></i> {{ pet.contato }}
+                            </div>
+                            <p class="mt-3 mb-0">Se você viu este pet, entre em contato imediatamente com o dono.</p>
+                        </div>
+                        <!-- ============= NOVA SEÇÃO AQUI ============= -->
+                        <!-- Seção de Últimos Avistamentos -->
+                        <div class="mt-5">
+                            <h4 class="section-title">
+                                <i class="fas fa-map-marked-alt me-2"></i> Últimos Avistamentos
+                            </h4>
+                            
+                            {% if pet.avistamentos %}
+                                <div class="row">
+                                    {% for avistamento in pet.avistamentos %}
+                                    <div class="col-md-6 mb-4">
+                                        <div class="avistamento-card p-3 h-100">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <strong>{{ avistamento.data_avistamento }}</strong>
+                                                <small class="text-muted">{{ loop.index }}° avistamento</small>
+                                            </div>
+                                            
+                                            <div class="mb-2">
+                                                <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                                {{ avistamento.local_avistamento }}
+                                            </div>
+                                            
+                                            {% if avistamento.foto_avistamento %}
+                                            <div class="mb-3">
+                                                <img src="{{ url_for('static', filename='uploads/avistamentos/' + avistamento.foto_avistamento) }}" 
+                                                     class="img-thumbnail w-100" style="max-height: 200px;">
+                                            </div>
+                                            {% endif %}
+                                            
+                                            {% if avistamento.observacoes %}
+                                            <div class="alert alert-light p-2 small">
+                                                {{ avistamento.observacoes }}
+                                            </div>
+                                            {% endif %}
+                                            
+                                            <div class="text-end">
+                                                <a href="{{ url_for('mapa_avistamento', avistamento_id=avistamento.id) }}" 
+                                                target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-map me-1"></i> Ver no Mapa
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    Nenhum avistamento registrado ainda.
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Botão para reportar novo avistamento -->
+                            <div class="text-center mt-4">
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#avistamentoModal">
+                                    <i class="fas fa-plus-circle me-2"></i> Reportar Novo Avistamento
+                                </button>
+                            </div>
+                        </div>
+                        <!-- ============= FIM DA NOVA SEÇÃO ============= -->
+                        
+                        <!-- Botões de ação -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('index') }}#visualizar" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left me-2"></i> Voltar
+                            </a>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#shareModal">
+                                <i class="fas fa-share-alt me-2"></i> Compartilhar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Compartilhamento -->
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="shareModalLabel">Compartilhar {{ pet.nome }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Ajude a encontrar {{ pet.nome }} compartilhando estas informações:</p>
+                
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="shareLink" value="{{ url_for('ver_pet', id=pet.id, _external=True) }}" readonly>
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyShareLink()">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                
+                <div class="social-share text-center">
+                    <a href="#" class="btn btn-outline-primary me-2"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="btn btn-outline-info me-2"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="btn btn-outline-success me-2"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="btn btn-outline-danger"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para reportar avistamento -->
+<div class="modal fade" id="avistamentoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reportar Avistamento de {{ pet.nome }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('reportar_avistamento', pet_id=pet.id) }}" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Data do Avistamento</label>
+                        <input type="date" name="data_avistamento" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Local do Avistamento</label>
+                        <input type="text" name="local_avistamento" class="form-control" required 
+                               placeholder="Ex: Parque Central, próximo ao lago">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Foto do Avistamento (opcional)</label>
+                        <input type="file" name="foto_avistamento" class="form-control" accept="image/*">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Observações</label>
+                        <textarea name="observacoes" class="form-control" rows="3" 
+                                  placeholder="Descreva as condições do pet, comportamento, etc."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Localização no Mapa</label>
+                        <div id="map" style="height: 200px; width: 100%; background-color: #eee; border-radius: 8px;"></div>
+                        <small class="text-muted">Clique no mapa para marcar a localização</small>
+                        <input type="hidden" name="coordenadas" id="coordenadas">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Enviar Relatório</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase">PetFinder</h5>
+                <p>Plataforma dedicada a reunir pets desaparecidos com suas famílias e promover a adoção responsável.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Contato</h5>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt me-2"></i> Santa Maria, RS</li>
+                    <li><i class="fas fa-phone me-2"></i> (55) 99999-9999</li>
+                    <li><i class="fas fa-envelope me-2"></i> contato@petfinder.com</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="text-center copyright">
+            <p class="mb-0">&copy; 2023 PetFinder. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+// Função para enviar o formulário via AJAX
+async function submitCadastroForm(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    try {
+        const response = await fetch('/cadastrar', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else {
+            const result = await response.json();
+            if (result.success) {
+                showSuccessModal();
+            } else {
+                alert('Erro: ' + result.error);
+            }
+        }
+    } catch (error) {
+        alert('Erro ao enviar formulário: ' + error.message);
+    }
+}
+
+// Função para mostrar o modal de sucesso
+function showSuccessModal() {
+    const modal = new bootstrap.Modal(document.getElementById('codigoModal'));
+    modal.show();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Atualize o event listener do DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar o formulário de cadastro
+    const cadastroForm = document.querySelector('#cadastro form');
+    if (cadastroForm) {
+        cadastroForm.addEventListener('submit', submitCadastroForm);
+    }
+    
+    // Mostrar modal se houver parâmetro success na URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('success')) {
+        showSuccessModal();
+    }
+    
+    // Configurar filtros da página de visualização
+    if (document.getElementById('petsContainer')) {
+        filterPets();
+    }
+});
+
+// Função para filtrar pets (atualizada)
+async function filterPets() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value;
+    
+    try {
+        const response = await fetch(`/pets_desaparecidos?search=${encodeURIComponent(searchTerm)}&status=${statusFilter}`);
+        const pets = await response.json();
+        
+        const container = document.getElementById('petsContainer');
+        container.innerHTML = '';
+        
+        pets.forEach(pet => {
+            const petCard = createPetCard(pet);
+            container.appendChild(petCard);
+        });
+    } catch (error) {
+        console.error('Erro ao filtrar pets:', error);
+    }
+}
+
+// Função para criar o card do pet (ajustada para o novo formato de dados)
+function createPetCard(pet) {
+    const col = document.createElement('div');
+    col.className = 'col-lg-4 col-md-6 mb-4';
+    
+    col.innerHTML = `
+        <div class="card h-100 shadow-sm">
+            ${pet.foto ? 
+                `<img src="/static/uploads/${pet.foto}" class="card-img-top" alt="${pet.nome}" style="height: 250px; object-fit: cover;">` : 
+                `<div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                    <i class="fas fa-paw fa-4x text-muted"></i>
+                </div>`
+            }
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">${pet.nome}</h5>
+                    <span class="badge ${getStatusBadgeClass(pet.status)}">${getStatusText(pet.status)}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="text-muted"><i class="fas fa-paw me-1"></i> ${pet.especie}</span>
+                    <span class="text-muted"><i class="fas fa-map-marker-alt me-1"></i> ${pet.local_desaparecimento.substring(0, 15)}${pet.local_desaparecimento.length > 15 ? '...' : ''}</span>
+                </div>
+                <p class="card-text text-muted small">
+                    <i class="far fa-calendar-alt me-1"></i> 
+                    Desaparecido em: ${pet.data_desaparecimento}
+                </p>
+            </div>
+            <div class="card-footer bg-transparent">
+                <a href="/pet/${pet.id}" class="btn btn-sm btn-outline-primary w-100">
+                    <i class="fas fa-search me-1"></i> Ver detalhes
+                </a>
+            </div>
+        </div>
+    `;
+    
+    return col;
+}
+
+// Funções auxiliares para status
+function getStatusBadgeClass(status) {
+    return {
+        'desaparecido': 'bg-warning text-dark',
+        'avistado': 'bg-info text-dark',
+        'encontrado': 'bg-success'
+    }[status] || 'bg-secondary';
+}
+
+function getStatusText(status) {
+    return {
+        'desaparecido': 'Desaparecido',
+        'avistado': 'Avistado',
+        'encontrado': 'Encontrado'
+    }[status] || status;
+}
+</script>
+
+<script>
+    function copyShareLink() {
+        const shareLink = document.getElementById('shareLink');
+        shareLink.select();
+        shareLink.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        
+        // Mostrar tooltip ou mensagem de sucesso
+        alert('Link copiado para a área de transferência!');
+    }
+</script>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+<script>
+// Mapa para o modal de avistamento
+let map;
+let marker;
+
+function initMap() {
+    const avistamentoModal = document.getElementById('avistamentoModal');
+    if (avistamentoModal) {
+        avistamentoModal.addEventListener('shown.bs.modal', function() {
+            if (!map) {
+                map = L.map('map').setView([-29.7, -53.8], 13); // Coordenadas padrão
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+                
+                map.on('click', function(e) {
+                    if (marker) {
+                        map.removeLayer(marker);
+                    }
+                    marker = L.marker(e.latlng).addTo(map);
+                    // Garante o formato "lat,long"
+                    document.getElementById('coordenadas').value = 
+                        `${e.latlng.lat.toFixed(6)},${e.latlng.lng.toFixed(6)}`;
+                });
+            } else {
+                map.invalidateSize();
+            }
+        });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+
+// Função para abrir o mapa com as coordenadas
+function openMap(coordenadas) {
+    const [lat, lng] = coordenadas.split(',').map(Number);
+    const url = `https://www.google.com/maps?q=${lat},${lng}`;
+    window.open(url, '_blank');
+}
+
+// Inicializar o mapa quando a página carregar
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html> 

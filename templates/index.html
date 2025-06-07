@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Desaparecido - Reunindo famílias e seus animais</title>
+    <meta name="description" content="Plataforma para ajudar a encontrar pets desaparecidos e conectar animais a famílias amorosas">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2e9e90;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b6b;
+            --dark-color: #343a40;
+            --light-color: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background-color: var(--light-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary-color) !important;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark-color) !important;
+            margin: 0 10px;
+            padding: 8px 15px !important;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-color);
+            color: var(--light-color) !important;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #23857a;
+            border-color: #23857a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .section {
+            display: none;
+            padding: 60px 0;
+        }
+        
+        .active-section {
+            display: block;
+        }
+        
+        .section-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-img-top {
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .card-title {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .pet-image {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-control, .form-select {
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(46, 158, 144, 0.25);
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            padding: 40px 0;
+        }
+        
+        .footer-links h5 {
+            color: var(--light-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #adb5bd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--light-color);
+        }
+        
+        .social-icons a {
+            color: var(--light-color);
+            font-size: 1.5rem;
+            margin-right: 15px;
+            transition: color 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            color: var(--primary-color);
+        }
+        
+        .copyright {
+            border-top: 1px solid #495057;
+            padding-top: 20px;
+            margin-top: 30px;
+        }
+        
+        .feature-box {
+            text-align: center;
+            padding: 30px;
+            background-color: var(--light-color);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .feature-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.5rem;
+            }            
+        }
+        
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#" onclick="showSection('inicio')">
+            <i class="fas fa-paw me-2"></i>PetFinder
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="#" onclick="showSection('inicio')">Início</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('cadastro')">Cadastrar</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('encontrado')">Encontrado</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('visualizar')">Pets Desaparecidos</a></li>
+                <li class="nav-item"><a class="nav-link" href="#" onclick="showSection('ongs')">ONGs</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div id="inicio" class="section active-section">
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Reunindo Pets e Famílias</h1>
+            <p class="hero-subtitle">Ajude a encontrar animais desaparecidos e dê a eles uma segunda chance</p>
+            <a href="#" class="btn btn-primary btn-lg" onclick="showSection('visualizar')">Ver Pets Desaparecidos</a>
+            <a href="#" class="btn btn-outline-light btn-lg ms-3" onclick="showSection('cadastro')">Reportar Pet Desaparecido</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="feature-title">Encontre Seu Pet</h3>
+                    <p>Nossa plataforma ajuda a reunir animais desaparecidos com seus donos através de um amplo banco de dados.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="feature-title">Adoção Responsável</h3>
+                    <p>Conectamos animais abandonados com famílias amorosas que podem oferecer um lar permanente.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3 class="feature-title">Apoie ONGs</h3>
+                    <p>Trabalhamos em parceria com organizações locais para proteger e cuidar de animais necessitados.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4">
+                <img src="https://images.unsplash.com/photo-1586671267731-da2cf3ceeb80?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cachorro feliz" class="img-fluid rounded">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="section-title">Como Funciona</h2>
+                <div class="d-flex mb-4">
+                    <div class="me-4">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <span class="h4 mb-0">1</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Registre seu pet desaparecido</h4>
+                        <p>Preencha o formulário com informações detalhadas e fotos do seu animal de estimação.</p>
+                    </div>
+                </div>
+                <div class="d-flex mb-4">
+                    <div class="me-4">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <span class="h4 mb-0">2</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Nossa rede entra em ação</h4>
+                        <p>Seu anúncio será compartilhado com nossa comunidade e parceiros para aumentar as chances de encontro.</p>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="me-4">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <span class="h4 mb-0">3</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Receba notificações</h4>
+                        <p>Se alguém avistar seu pet, você será notificado imediatamente para tomar as providências.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="cadastro" class="section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <h2 class="section-title text-center">Cadastrar Animal Desaparecido</h2>
+                        <form action="/cadastrar" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nome do Pet</label>
+                                        <input type="text" name="nome" class="form-control" required placeholder="Ex: Rex, Luna">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Espécie</label>
+                                        <select name="especie" class="form-select" required>
+                                            <option value="">Selecione a espécie</option>
+                                            <option value="Cachorro">Cachorro</option>
+                                            <option value="Gato">Gato</option>
+                                            <option value="Outro">Outro</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Raça</label>
+                                        <input type="text" name="raca" class="form-control" placeholder="Ex: Labrador, Siames">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Data de desaparecimento</label>
+                                        <input type="date" name="data_desaparecimento" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Local do desaparecimento</label>
+                                <input type="text" name="local_desaparecimento" class="form-control" required placeholder="Ex: Rua das Flores, 123 - Bairro Centro">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Foto do Pet</label>
+                                <input type="file" name="foto" accept="image/*" class="form-control">
+                                <small class="text-muted">Adicione uma foto clara para facilitar a identificação</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Descrição</label>
+                                <textarea name="descricao" class="form-control" rows="4" placeholder="Descreva características marcantes, comportamento, coleira, etc."></textarea>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Informações de Contato</label>
+                                <input type="text" name="contato" class="form-control" required placeholder="Email ou Telefone">
+                            </div>
+                            
+                            <input type="hidden" name="codigo_baixa" value="123456">
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-paper-plane me-2"></i> Cadastrar Pet Desaparecido
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="encontrado" class="section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <h2 class="section-title text-center">Dar como Encontrado</h2>
+                        <form action="/encontrado" method="POST">
+                            <div class="mb-4">
+                                <label class="form-label">Selecione o pet</label>
+                                <select name="petId" class="form-select" required>
+                                    {% for pet in pets %}
+                                        <option value="{{ pet.id }}">{{ pet.nome }} ({{ pet.especie }}) - Desaparecido em: {{ pet.data_desaparecimento }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Código de Baixa</label>
+                                <input type="text" name="codigo_baixa" class="form-control" required placeholder="Digite o código recebido no cadastro">
+                                <small class="text-muted">O código foi enviado para você quando cadastrou o pet desaparecido</small>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Data em que foi encontrado</label>
+                                        <input type="date" name="dataEncontrado" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Local onde foi encontrado</label>
+                                        <input type="text" name="localEncontrado" class="form-control" required placeholder="Ex: Parque Central">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Detalhes adicionais (opcional)</label>
+                                <textarea name="detalhes" class="form-control" rows="3" placeholder="Condições em que foi encontrado, quem encontrou, etc."></textarea>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-check-circle me-2"></i> Confirmar Pet Encontrado
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="visualizar" class="section">
+    <div class="container">
+        <h2 class="section-title text-center">Pets Desaparecidos</h2>
+        
+        <!-- Filtros Combinados -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Buscar por nome, raça ou local..." 
+                           id="searchInput">
+                    <button class="btn btn-primary" type="button" id="searchButton">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <select class="form-select" id="statusFilter">
+                    <option value="all">Todos os status</option>
+                    <option value="desaparecido">Desaparecidos</option>
+                    <option value="avistado">Avistados</option>
+                  <!--  <option value="encontrado">Encontrados</option>-->
+                </select>
+            </div>
+        </div>
+        
+        <!-- Lista de Pets -->
+        <div class="row" id="petsContainer">
+            {% for pet in pets %}
+                <div class="col-lg-4 col-md-6 mb-4 pet-card" 
+                     data-name="{{ pet.nome|lower }}" 
+                     data-species="{{ pet.especie|lower }}"
+                     data-location="{{ pet.local_desaparecimento|lower }}"
+                     data-status="{% if pet.encontrado %}encontrado{% elif pet.avistado %}avistado{% else %}desaparecido{% endif %}">
+                    <div class="card h-100 shadow-sm">
+                        {% if pet.foto %}
+                            <img src="{{ url_for('static', filename='uploads/' + pet.foto) }}" 
+                                 class="card-img-top" 
+                                 alt="{{ pet.nome }}"
+                                 style="height: 250px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                                 style="height: 250px;">
+                                <i class="fas fa-paw fa-4x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">{{ pet.nome }}</h5>
+                                <span class="badge 
+                                    {% if pet.encontrado %}bg-success
+                                    {% elif pet.avistado %}bg-info text-dark
+                                    {% else %}bg-warning text-dark{% endif %}">
+                                    {% if pet.encontrado %}Encontrado
+                                    {% elif pet.avistado %}Avistado
+                                    {% else %}Desaparecido{% endif %}
+                                </span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-muted"><i class="fas fa-paw me-1"></i> {{ pet.especie }}</span>
+                                <span class="text-muted"><i class="fas fa-map-marker-alt me-1"></i> {{ pet.local_desaparecimento|truncate(15) }}</span>
+                            </div>
+                            
+                            <p class="card-text text-muted small">
+                                <i class="far fa-calendar-alt me-1"></i> 
+                                Desaparecido em: {{ pet.data_desaparecimento }}
+                            </p>
+                            
+                            {% if pet.avistado and not pet.encontrado %}
+                                <div class="alert alert-info py-2 px-3 mt-2 mb-3 small">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Avistado em {{ pet.data_avistamento }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card-footer bg-transparent">
+                            <a href="{{ url_for('ver_pet', id=pet.id) }}" class="btn btn-sm btn-outline-primary w-100">
+                                <i class="fas fa-search me-1"></i> Ver detalhes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        Nenhum pet encontrado com esses critérios.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div id="ongs" class="section">
+    <div class="container">
+        <h2 class="section-title text-center">Organizações Parceiras</h2>
+        <p class="text-center mb-5">Conheça e apoie as organizações que trabalham para proteger os animais em nossa comunidade</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <img src="{{ url_for('static', filename='img/zelo.png') }}" class="img-fluid mb-4" style="max-height: 150px;" alt="Zelo UFSM">
+                        <h4>Zelo UFSM</h4>
+                        <p class="text-muted">Organização beneficente da UFSM dedicada à proteção e bem-estar animal.</p>
+                        <div class="mt-4">
+                            <a href="https://www.instagram.com/zeloufsm?igsh=dzRzNXJ5NG56MW8y" target="_blank" class="btn btn-outline-primary me-2">
+                                <i class="fab fa-instagram"></i> Instagram
+                            </a>
+                            <a href="#" class="btn btn-outline-secondary">
+                                <i class="fas fa-globe"></i> Site
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-light p-4 mb-4 rounded">
+                            <i class="fas fa-paw fa-5x text-primary"></i>
+                        </div>
+                        <h4>Projeto Patinhas</h4>
+                        <p class="text-muted">Resgate, reabilitação e adoção responsável de animais abandonados.</p>
+                        <div class="mt-4">
+                            <a href="#" class="btn btn-outline-primary me-2">
+                                <i class="fab fa-facebook"></i> Facebook
+                            </a>
+                            <a href="#" class="btn btn-outline-secondary">
+                                <i class="fas fa-phone"></i> Contato
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="bg-light p-4 mb-4 rounded">
+                            <i class="fas fa-heart fa-5x text-primary"></i>
+                        </div>
+                        <h4>Amigos dos Bichos</h4>
+                        <p class="text-muted">Promovendo a posse responsável e combatendo o abandono animal.</p>
+                        <div class="mt-4">
+                            <a href="#" class="btn btn-outline-primary me-2">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </a>
+                            <a href="#" class="btn btn-outline-secondary">
+                                <i class="fas fa-envelope"></i> Email
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <h4>Quer se tornar um parceiro?</h4>
+            <p class="mb-4">Organizações que trabalham com proteção animal podem entrar em contato para ampliar seu alcance</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase">PetFinder</h5>
+                <p>Plataforma dedicada a reunir pets desaparecidos com suas famílias e promover a adoção responsável.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Links Úteis</h5>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="showSection('inicio')">Início</a></li>
+                    <li><a href="#" onclick="showSection('cadastro')">Cadastrar Pet</a></li>
+                    <li><a href="#" onclick="showSection('visualizar')">Pets Desaparecidos</a></li>
+                    <li><a href="#" onclick="showSection('ongs')">ONGs Parceiras</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Contato</h5>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt me-2"></i> Santa Maria, RS</li>
+                    <li><i class="fas fa-phone me-2"></i> (55) 99999-9999</li>
+                    <li><i class="fas fa-envelope me-2"></i> contato@petfinder.com</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="text-center copyright">
+            <p class="mb-0">&copy; 2025 PetFinder. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<div class="modal fade" id="codigoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Código de Baixa Gerado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    O código de baixa <strong>123456</strong> foi enviado para o seu contato.
+                    Use este código para marcar seu pet como encontrado quando ele for localizado.
+                </div>
+                <p class="mb-0">Guarde este código em um local seguro. Você precisará dele para confirmar que encontrou seu pet.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+<script>
+    // Função para mostrar seções
+    function showSection(id) {
+        // Esconde todas as seções
+        document.querySelectorAll('.section').forEach(sec => {
+            sec.classList.remove('active-section');
+        });
+        
+        // Mostra a seção selecionada
+        document.getElementById(id).classList.add('active-section');
+        
+        // Atualiza a navegação ativa
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        
+        // Encontra o link correspondente e marca como ativo
+        const activeLink = document.querySelector(`a[onclick*="showSection('${id}')"]`);
+        if (activeLink) {
+            activeLink.classList.add('active');
+        }
+        
+        // Rolagem suave para o topo
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Se for a seção de visualização, aplica os filtros
+        if (id === 'visualizar') {
+            filterPets();
+        }
+    }
+    
+    // Função para filtrar os pets
+    function filterPets() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const petCards = document.querySelectorAll('.pet-card');
+        let visiblePets = 0;
+        
+        petCards.forEach(card => {
+            const name = card.dataset.name;
+            const species = card.dataset.species;
+            const location = card.dataset.location;
+            const status = card.dataset.status;
+            
+            // Verifica se corresponde ao termo de busca
+            const matchesSearch = searchTerm === '' || 
+                                 name.includes(searchTerm) || 
+                                 species.includes(searchTerm) || 
+                                 location.includes(searchTerm);
+            
+            // Verifica se corresponde ao filtro de status
+            const matchesStatus = statusFilter === 'all' || status === statusFilter;
+            
+            // Mostra ou esconde o card com base nos filtros
+            if (matchesSearch && matchesStatus) {
+                card.style.display = 'block';
+                visiblePets++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Mostra mensagem se não houver resultados
+        const noResultsMessage = document.getElementById('noResultsMessage');
+        if (visiblePets === 0) {
+            if (!noResultsMessage) {
+                const container = document.getElementById('petsContainer');
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="col-12" id="noResultsMessage">
+                        <div class="alert alert-info text-center">
+                            Nenhum pet encontrado com esses critérios de busca.
+                        </div>
+                    </div>
+                `);
+            }
+        } else if (noResultsMessage) {
+            noResultsMessage.remove();
+        }
+    }
+    
+    // Event listeners para os filtros
+    document.getElementById('searchInput').addEventListener('input', filterPets);
+    document.getElementById('statusFilter').addEventListener('change', filterPets);
+    document.getElementById('searchButton').addEventListener('click', filterPets);
+    
+    // Previne o submit do formulário ao pressionar Enter
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            filterPets();
+        }
+    });
+    
+    // Mostra a seção inicial ao carregar a página
+    document.addEventListener('DOMContentLoaded', function() {
+        showSection('inicio');
+        
+        // Verifica se deve mostrar o modal de código
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            const modal = new bootstrap.Modal(document.getElementById('codigoModal'));
+            modal.show();
+        }
+    });
+</script>
+</body>
+</html>
